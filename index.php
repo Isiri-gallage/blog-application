@@ -29,7 +29,10 @@ $flash = getFlashMessage();
 <body>
     <nav class="navbar">
         <div class="container">
-            <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
+            <div class="brand-section">
+                <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
+                <p class="brand-tagline">Where ideas come to life and stories find their voice</p>
+            </div>
             <div class="nav-links">
                 <?php if (isLoggedIn()): ?>
                     <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
