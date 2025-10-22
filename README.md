@@ -449,8 +449,8 @@ Potential features to add:
 ## 📧 Contact
 
 For any questions or issues, please contact:
-- Email: your-email@example.com
-- GitHub: your-github-username
+- Email: your-isirigallage2002@gmail.com
+- GitHub: Isiri-gallage
 
 ## 📄 License
 
