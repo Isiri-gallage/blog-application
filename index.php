@@ -33,6 +33,7 @@ $flash = getFlashMessage();
             <div class="nav-links">
                 <?php if (isLoggedIn()): ?>
                     <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
+                    <a href="profile.php" class="btn btn-secondary">My Profile</a>
                     <a href="create-blog.php" class="btn btn-primary">Create Blog</a>
                     <a href="api/logout.php" class="btn btn-secondary">Logout</a>
                 <?php else: ?>
@@ -69,7 +70,9 @@ $flash = getFlashMessage();
                             </a>
                         </h2>
                         <div class="blog-meta">
-                            <span class="author">By <?php echo htmlspecialchars($blog['username']); ?></span>
+                            <span class="author">
+                                By <a href="profile.php?id=<?php echo $blog['user_id']; ?>"><?php echo htmlspecialchars($blog['username']); ?></a>
+                            </span>
                             <span class="date"><?php echo formatDate($blog['created_at']); ?></span>
                         </div>
                         <div class="blog-excerpt">

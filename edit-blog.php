@@ -37,6 +37,7 @@ $currentUser = getCurrentUser();
             <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
             <div class="nav-links">
                 <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
+                <a href="profile.php" class="btn btn-secondary">My Profile</a>
                 <a href="index.php" class="btn btn-secondary">Home</a>
                 <a href="api/logout.php" class="btn btn-secondary">Logout</a>
             </div>
