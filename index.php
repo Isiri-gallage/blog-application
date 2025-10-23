@@ -68,12 +68,40 @@ $flash = getFlashMessage();
                 <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
                 <p class="brand-tagline">Where ideas come to life and stories find their voice</p>
             </div>
+            
+            <!-- Search Bar in Navigation -->
+            <div class="nav-search">
+                <form method="GET" action="index.php" class="nav-search-form">
+                    <input type="text" name="search" placeholder="Search blogs..." value="<?php echo htmlspecialchars($searchQuery); ?>" class="nav-search-input">
+                </form>
+            </div>
+            
             <div class="nav-links">
                 <?php if (isLoggedIn()): ?>
-                    <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
-                    <a href="profile.php" class="btn btn-secondary">My Profile</a>
                     <a href="create-blog.php" class="btn btn-primary">Create Blog</a>
-                    <a href="api/logout.php" class="btn btn-secondary">Logout</a>
+                    
+                    <!-- Profile Dropdown - Only show name and avatar -->
+                    <div class="profile-dropdown">
+                        <button class="profile-trigger" onclick="toggleProfileMenu()">
+                            <div class="profile-avatar-small">
+                                <?php echo strtoupper(substr($currentUser['username'], 0, 1)); ?>
+                            </div>
+                            <span class="profile-name"><?php echo htmlspecialchars($currentUser['username']); ?></span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        
+                        <!-- Dropdown appears on click -->
+                        <div class="profile-dropdown-menu" id="profileMenu">
+                            <a href="profile.php" class="dropdown-item">
+                                <span class="item-icon">👤</span>
+                                <span>My Profile</span>
+                            </a>
+                            <a href="api/logout.php" class="dropdown-item">
+                                <span class="item-icon">🚪</span>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
                 <?php else: ?>
                     <a href="login.php" class="btn btn-secondary">Login</a>
                     <a href="register.php" class="btn btn-primary">Register</a>
@@ -141,19 +169,12 @@ $flash = getFlashMessage();
             </div>
         <?php endif; ?>
         
-        <!-- Search Bar -->
-        <div class="search-section">
-            <form method="GET" class="search-form">
-                <input type="text" name="search" placeholder="🔍 Search blogs by title or content..." value="<?php echo htmlspecialchars($searchQuery); ?>" class="search-input">
-                <button type="submit" class="btn btn-primary">Search</button>
-                <?php if ($searchQuery): ?>
-                    <a href="index.php" class="btn btn-secondary">Clear</a>
-                <?php endif; ?>
-            </form>
-            <?php if ($searchQuery): ?>
-                <p class="search-results">Found <?php echo count($blogs); ?> result(s) for "<?php echo htmlspecialchars($searchQuery); ?>"</p>
-            <?php endif; ?>
-        </div>
+        <?php if ($searchQuery): ?>
+            <div class="search-results-info">
+                <p>Found <?php echo count($blogs); ?> result(s) for "<strong><?php echo htmlspecialchars($searchQuery); ?></strong>"</p>
+                <a href="index.php" class="btn btn-secondary">Clear Search</a>
+            </div>
+        <?php endif; ?>
         
         <!-- All Blogs Section -->
         <h2 class="section-title" id="blogs"><?php echo $searchQuery ? 'Search Results' : '📚 Latest Blog Posts'; ?></h2>
@@ -200,5 +221,29 @@ $flash = getFlashMessage();
     </footer>
     
     <script src="assets/js/main.js"></script>
+    <script>
+        // Profile dropdown toggle
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('show');
+        }
+        
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.profile-trigger') && !event.target.closest('.profile-trigger')) {
+                const menu = document.getElementById('profileMenu');
+                if (menu && menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+        
+        // Submit search on Enter key
+        document.querySelector('.nav-search-input')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.closest('form').submit();
+            }
+        });
+    </script>
 </body>
 </html>
