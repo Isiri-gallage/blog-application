@@ -90,11 +90,23 @@ $flash = getFlashMessage();
                 <p class="hero-subtitle">Where ideas come to life and stories find their voice. Share your thoughts, connect with fellow writers, and engage through comments and likes.</p>
                 <div class="hero-actions">
                     <?php if (isLoggedIn()): ?>
-                        <a href="create-blog.php" class="btn btn-hero-primary">✍️ Write Your Story</a>
-                        <a href="#blogs" class="btn btn-hero-secondary">📖 Explore Blogs</a>
+                        <a href="create-blog.php" class="btn btn-hero-primary">
+                            <span>✍️</span>
+                            <span>Write Your Story</span>
+                        </a>
+                        <a href="#blogs" class="btn btn-hero-secondary">
+                            <span>📖</span>
+                            <span>Explore Blogs</span>
+                        </a>
                     <?php else: ?>
-                        <a href="register.php" class="btn btn-hero-primary">🚀 Get Started</a>
-                        <a href="#blogs" class="btn btn-hero-secondary">📖 Explore Blogs</a>
+                        <a href="register.php" class="btn btn-hero-primary">
+                            <span>🚀</span>
+                            <span>Get Started</span>
+                        </a>
+                        <a href="#blogs" class="btn btn-hero-secondary">
+                            <span>📖</span>
+                            <span>Explore Blogs</span>
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
