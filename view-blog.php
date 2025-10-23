@@ -24,6 +24,10 @@ if (!$blog) {
     exit();
 }
 
+// Increment view count
+$stmt = $conn->prepare("UPDATE blog_post SET views = views + 1 WHERE id = ?");
+$stmt->execute([$blogId]);
+
 // Get likes count
 $stmt = $conn->prepare("SELECT COUNT(*) as total FROM blog_like WHERE blog_id = ?");
 $stmt->execute([$blogId]);
