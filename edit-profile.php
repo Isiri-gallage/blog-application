@@ -9,7 +9,7 @@ requireLogin();
 $conn = getDBConnection();
 $currentUser = getCurrentUser();
 
-// Get user with bio
+// Get user with bio and profile picture
 $stmt = $conn->prepare("SELECT * FROM user WHERE id = ?");
 $stmt->execute([getCurrentUserId()]);
 $user = $stmt->fetch();
@@ -17,6 +17,37 @@ $user = $stmt->fetch();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = sanitize($_POST['username'] ?? '');
     $bio = trim($_POST['bio'] ?? '');
+    $profilePicture = $user['profile_picture'] ?? null; // Keep existing if no new upload
+    
+    // Handle profile picture upload
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === 0) {
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+        $filename = $_FILES['profile_picture']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if (in_array($ext, $allowed)) {
+            // Create unique filename
+            $newFilename = 'profile_' . getCurrentUserId() . '_' . time() . '.' . $ext;
+            $uploadPath = 'uploads/profiles/' . $newFilename;
+            
+            // Create directory if doesn't exist
+            if (!file_exists('uploads/profiles')) {
+                mkdir('uploads/profiles', 0777, true);
+            }
+            
+            // Delete old profile picture if exists
+            if (!empty($user['profile_picture']) && file_exists($user['profile_picture'])) {
+                unlink($user['profile_picture']);
+            }
+            
+            // Move uploaded file
+            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadPath)) {
+                $profilePicture = $uploadPath;
+            }
+        } else {
+            setFlashMessage('error', 'Invalid file type. Only JPG, PNG, and GIF are allowed.');
+        }
+    }
     
     if (empty($username)) {
         setFlashMessage('error', 'Username is required');
@@ -29,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setFlashMessage('error', 'Username already taken');
         } else {
             try {
-                $stmt = $conn->prepare("UPDATE user SET username = ?, bio = ? WHERE id = ?");
-                $stmt->execute([$username, $bio, getCurrentUserId()]);
+                $stmt = $conn->prepare("UPDATE user SET username = ?, bio = ?, profile_picture = ? WHERE id = ?");
+                $stmt->execute([$username, $bio, $profilePicture, getCurrentUserId()]);
                 
                 $_SESSION['username'] = $username;
                 setFlashMessage('success', 'Profile updated successfully');
@@ -74,7 +105,26 @@ $flash = getFlashMessage();
             </div>
         <?php endif; ?>
         
-        <form method="POST" class="blog-form">
+        <form method="POST" enctype="multipart/form-data" class="blog-form">
+            <div class="form-group">
+                <label>Current Profile Picture</label>
+                <div style="margin-bottom: 1rem;">
+                    <?php if (!empty($user['profile_picture']) && file_exists($user['profile_picture'])): ?>
+                        <img src="<?php echo $user['profile_picture']; ?>" alt="Profile" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #667eea;">
+                    <?php else: ?>
+                        <div class="avatar-circle" style="width: 100px; height: 100px; font-size: 2.5rem; display: inline-flex;">
+                            <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="profile_picture">Upload New Profile Picture</label>
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png,image/gif,image/jpg">
+                <small style="color: #7f8c8d; display: block; margin-top: 0.5rem;">Accepted formats: JPG, PNG, GIF (Max 5MB)</small>
+            </div>
+            
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required value="<?php echo htmlspecialchars($user['username']); ?>">

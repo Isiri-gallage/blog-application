@@ -25,7 +25,7 @@ $totalComments = $stmt->fetch()['total'];
 // Get all blog posts with search
 if ($searchQuery) {
     $stmt = $conn->prepare("
-        SELECT bp.*, u.username,
+        SELECT bp.*, u.username, u.profile_picture,
                COALESCE(bp.views, 0) as views,
                (SELECT COUNT(*) FROM blog_like WHERE blog_id = bp.id) as likes,
                (SELECT COUNT(*) FROM comment WHERE blog_id = bp.id) as comments
@@ -38,7 +38,7 @@ if ($searchQuery) {
     $stmt->execute([$searchTerm, $searchTerm]);
 } else {
     $stmt = $conn->prepare("
-        SELECT bp.*, u.username,
+        SELECT bp.*, u.username, u.profile_picture,
                COALESCE(bp.views, 0) as views,
                (SELECT COUNT(*) FROM blog_like WHERE blog_id = bp.id) as likes,
                (SELECT COUNT(*) FROM comment WHERE blog_id = bp.id) as comments
@@ -73,6 +73,12 @@ $flash = getFlashMessage();
             <div class="nav-search">
                 <form method="GET" action="index.php" class="nav-search-form">
                     <input type="text" name="search" placeholder="Search blogs..." value="<?php echo htmlspecialchars($searchQuery); ?>" class="nav-search-input">
+                    <button type="submit" class="nav-search-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
                 </form>
             </div>
             
@@ -83,9 +89,13 @@ $flash = getFlashMessage();
                     <!-- Profile Dropdown - Only show name and avatar -->
                     <div class="profile-dropdown">
                         <button class="profile-trigger" onclick="toggleProfileMenu()">
-                            <div class="profile-avatar-small">
-                                <?php echo strtoupper(substr($currentUser['username'], 0, 1)); ?>
-                            </div>
+                            <?php if (isset($currentUser['profile_picture']) && $currentUser['profile_picture'] && file_exists($currentUser['profile_picture'])): ?>
+                                <img src="<?php echo $currentUser['profile_picture']; ?>" alt="<?php echo htmlspecialchars($currentUser['username']); ?>" class="profile-avatar-small">
+                            <?php else: ?>
+                                <div class="profile-avatar-small">
+                                    <?php echo strtoupper(substr($currentUser['username'], 0, 1)); ?>
+                                </div>
+                            <?php endif; ?>
                             <span class="profile-name"><?php echo htmlspecialchars($currentUser['username']); ?></span>
                             <span class="dropdown-arrow">▼</span>
                         </button>
@@ -177,7 +187,7 @@ $flash = getFlashMessage();
         <?php endif; ?>
         
         <!-- All Blogs Section -->
-        <h2 class="section-title" id="blogs"><?php echo $searchQuery ? 'Search Results' : '📚 Latest Blog Posts'; ?></h2>
+        <h2 class="section-title" id="blogs"><?php echo $searchQuery ? 'Search Results' : 'Latest Blog Posts'; ?></h2>
         
         <div class="blog-grid">
             <?php if (empty($blogs)): ?>
@@ -196,9 +206,18 @@ $flash = getFlashMessage();
                             </a>
                         </h2>
                         <div class="blog-meta">
-                            <span class="author">
-                                By <a href="profile.php?id=<?php echo $blog['user_id']; ?>"><?php echo htmlspecialchars($blog['username']); ?></a>
-                            </span>
+                            <div class="author-info">
+                                <?php if (isset($blog['profile_picture']) && $blog['profile_picture'] && file_exists($blog['profile_picture'])): ?>
+                                    <img src="<?php echo $blog['profile_picture']; ?>" alt="<?php echo htmlspecialchars($blog['username']); ?>" class="author-avatar">
+                                <?php else: ?>
+                                    <div class="author-avatar avatar-fallback">
+                                        <?php echo strtoupper(substr($blog['username'], 0, 1)); ?>
+                                    </div>
+                                <?php endif; ?>
+                                <span class="author">
+                                    By <a href="profile.php?id=<?php echo $blog['user_id']; ?>"><?php echo htmlspecialchars($blog['username']); ?></a>
+                                </span>
+                            </div>
                             <span class="date"><?php echo formatDate($blog['created_at']); ?></span>
                         </div>
                         <div class="blog-stats">

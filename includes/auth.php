@@ -20,7 +20,7 @@ function getCurrentUser() {
     require_once __DIR__ . '/../config/database.php';
     $conn = getDBConnection();
     
-    $stmt = $conn->prepare("SELECT id, username, email, role FROM user WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, username, email, role, profile_picture FROM user WHERE id = ?");
     $stmt->execute([getCurrentUserId()]);
     return $stmt->fetch();
 }
