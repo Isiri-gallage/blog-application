@@ -14,8 +14,8 @@ if (!$userId) {
 
 $conn = getDBConnection();
 
-// Get user info
-$stmt = $conn->prepare("SELECT id, username, email, bio, created_at FROM user WHERE id = ?");
+// Get user info with profile picture
+$stmt = $conn->prepare("SELECT id, username, email, bio, profile_picture, created_at FROM user WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
@@ -28,7 +28,8 @@ if (!$user) {
 $stmt = $conn->prepare("
     SELECT bp.*, 
            (SELECT COUNT(*) FROM blog_like WHERE blog_id = bp.id) as likes,
-           (SELECT COUNT(*) FROM comment WHERE blog_id = bp.id) as comments
+           (SELECT COUNT(*) FROM comment WHERE blog_id = bp.id) as comments,
+           COALESCE(bp.views, 0) as views
     FROM blog_post bp 
     WHERE bp.user_id = ? 
     ORDER BY bp.created_at DESC
@@ -65,13 +66,51 @@ $flash = getFlashMessage();
 <body>
     <nav class="navbar">
         <div class="container">
-            <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
+            <div class="brand-section">
+                <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
+                <p class="brand-tagline">Where ideas come to life and stories find their voice</p>
+            </div>
+            
+            <div class="nav-search">
+                <form method="GET" action="index.php" class="nav-search-form">
+                    <input type="text" name="search" placeholder="Search blogs..." class="nav-search-input">
+                    <button type="submit" class="nav-search-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            
             <div class="nav-links">
                 <?php if (isLoggedIn()): ?>
-                    <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
-                    <a href="profile.php" class="btn btn-secondary">My Profile</a>
                     <a href="create-blog.php" class="btn btn-primary">Create Blog</a>
-                    <a href="api/logout.php" class="btn btn-secondary">Logout</a>
+                    
+                    <div class="profile-dropdown">
+                        <button class="profile-trigger" onclick="toggleProfileMenu()">
+                            <?php if (isset($currentUser['profile_picture']) && $currentUser['profile_picture'] && file_exists($currentUser['profile_picture'])): ?>
+                                <img src="<?php echo $currentUser['profile_picture']; ?>" alt="<?php echo htmlspecialchars($currentUser['username']); ?>" class="profile-avatar-small">
+                            <?php else: ?>
+                                <div class="profile-avatar-small">
+                                    <?php echo strtoupper(substr($currentUser['username'], 0, 1)); ?>
+                                </div>
+                            <?php endif; ?>
+                            <span class="profile-name"><?php echo htmlspecialchars($currentUser['username']); ?></span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        
+                        <div class="profile-dropdown-menu" id="profileMenu">
+                            <a href="profile.php" class="dropdown-item">
+                                <span class="item-icon">👤</span>
+                                <span>My Profile</span>
+                            </a>
+                            <a href="api/logout.php" class="dropdown-item">
+                                <span class="item-icon">🚪</span>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
                 <?php else: ?>
                     <a href="login.php" class="btn btn-secondary">Login</a>
                     <a href="register.php" class="btn btn-primary">Register</a>
@@ -91,13 +130,17 @@ $flash = getFlashMessage();
         
         <div class="profile-header">
             <div class="profile-avatar">
-                <div class="avatar-circle">
-                    <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
-                </div>
+                <?php if (isset($user['profile_picture']) && !empty($user['profile_picture']) && file_exists($user['profile_picture'])): ?>
+                    <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" alt="<?php echo htmlspecialchars($user['username']); ?>" class="avatar-image">
+                <?php else: ?>
+                    <div class="avatar-circle">
+                        <?php echo strtoupper(substr($user['username'], 0, 1)); ?>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="profile-info">
                 <h1><?php echo htmlspecialchars($user['username']); ?></h1>
-                <?php if ($user['bio']): ?>
+                <?php if (!empty($user['bio'])): ?>
                     <p class="profile-bio"><?php echo htmlspecialchars($user['bio']); ?></p>
                 <?php endif; ?>
                 <div class="profile-stats">
@@ -142,6 +185,7 @@ $flash = getFlashMessage();
                             <span class="date"><?php echo formatDate($blog['created_at']); ?></span>
                             <span class="likes">❤️ <?php echo $blog['likes']; ?></span>
                             <span class="comments">💬 <?php echo $blog['comments']; ?></span>
+                            <span class="views">👁️ <?php echo $blog['views']; ?></span>
                         </div>
                         <div class="blog-excerpt">
                             <?php echo truncateText(strip_tags($blog['content']), 150); ?>
@@ -158,5 +202,20 @@ $flash = getFlashMessage();
     </footer>
     
     <script src="assets/js/main.js"></script>
+    <script>
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('show');
+        }
+        
+        window.onclick = function(event) {
+            if (!event.target.matches('.profile-trigger') && !event.target.closest('.profile-trigger')) {
+                const menu = document.getElementById('profileMenu');
+                if (menu && menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+    </script>
 </body>
 </html>
