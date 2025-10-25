@@ -52,6 +52,22 @@ $blogs = $stmt->fetchAll();
 
 $currentUser = getCurrentUser();
 $flash = getFlashMessage();
+
+// Show hero banner logic:
+// 1. Always show for non-logged-in users
+// 2. For logged-in users, show only on first login
+$showHeroBanner = false;
+
+if (!isLoggedIn()) {
+    // Not logged in - always show hero
+    $showHeroBanner = true;
+} else {
+    // Logged in - check if first time
+    if (!isset($_SESSION['has_seen_hero'])) {
+        $showHeroBanner = true;
+        $_SESSION['has_seen_hero'] = true;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -121,7 +137,8 @@ $flash = getFlashMessage();
     </nav>
     
     <div class="container main-content">
-        <!-- Hero Section with Statistics -->
+        <!-- Hero Section with Statistics - Only show on first visit -->
+        <?php if ($showHeroBanner): ?>
         <div class="hero-banner">
             <div class="hero-content">
                 <h1 class="hero-title">Welcome to <span class="highlight">Momentum</span></h1>
@@ -172,6 +189,7 @@ $flash = getFlashMessage();
                 </div>
             </div>
         </div>
+        <?php endif; ?>
         
         <?php if ($flash): ?>
             <div class="alert alert-<?php echo $flash['type']; ?>">
