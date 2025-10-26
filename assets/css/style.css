@@ -542,8 +542,13 @@ body {
 }
 
 .stat-icon {
-    font-size: 2.5rem;
     margin-bottom: 0.5rem;
+    color: white;
+}
+
+.stat-icon svg {
+    display: block;
+    margin: 0 auto;
 }
 
 .stat-number {
