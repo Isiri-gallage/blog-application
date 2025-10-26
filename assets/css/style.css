@@ -568,11 +568,12 @@ body {
     color: white;
 }
 
-.stat-label {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #2c3e50;
-    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+.stats-grid .stat-label,
+.stat-card .stat-label {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #2c3e50 !important;
+    text-shadow: 0 2px 4px rgba(255,255,255,0.9) !important;
 }
 
 /* Section Title */
@@ -633,6 +634,7 @@ body {
     display: flex;
     gap: 1rem;
     margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
     font-size: 0.9rem;
     color: #7f8c8d;
 }
@@ -640,11 +642,24 @@ body {
 .blog-stats span {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
 }
 
 .blog-stats svg {
     flex-shrink: 0;
+    stroke-width: 2.5;
+}
+
+.blog-stats .likes svg {
+    color: #e74c3c;
+}
+
+.blog-stats .comments svg {
+    color: #3498db;
+}
+
+.blog-stats .views svg {
+    color: #95a5a6;
 }
 
 .blog-excerpt {
@@ -864,7 +879,7 @@ body {
 
 .stat-label {
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: #2c3e50;
 }
 
 /* Comments Section */
