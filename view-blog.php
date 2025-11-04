@@ -63,6 +63,68 @@ $flash = getFlashMessage();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($blog['title']); ?> - <?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Icon styles to match index.php blog cards */
+        .blog-engagement {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .like-btn, .like-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6b7280;
+            padding: 0;
+        }
+        
+        .like-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            transition: all 0.2s ease;
+        }
+        
+        .like-btn.liked svg {
+            fill: #ef4444;
+            stroke: #ef4444;
+        }
+        
+        .like-btn.liked {
+            color: #ef4444;
+        }
+        
+        .like-display svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            stroke: none;
+        }
+        
+        .comment-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .comment-count svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -107,13 +169,25 @@ $flash = getFlashMessage();
                 <div class="blog-engagement">
                     <?php if (isLoggedIn()): ?>
                         <button onclick="toggleLike(<?php echo $blog['id']; ?>)" class="like-btn <?php echo $userLiked ? 'liked' : ''; ?>" id="likeBtn">
-                            <span class="like-icon">❤️</span>
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
                             <span class="like-count" id="likeCount"><?php echo $likesCount; ?></span>
                         </button>
                     <?php else: ?>
-                        <span class="like-display">❤️ <?php echo $likesCount; ?></span>
+                        <span class="like-display">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <?php echo $likesCount; ?>
+                        </span>
                     <?php endif; ?>
-                    <span class="comment-count">💬 <?php echo count($comments); ?> Comments</span>
+                    <span class="comment-count">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <?php echo count($comments); ?> Comments
+                    </span>
                 </div>
             </header>
             
@@ -253,7 +327,12 @@ $flash = getFlashMessage();
                     const countElement = document.querySelector('.comment-count');
                     if (countElement) {
                         const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]);
-                        countElement.textContent = `💬 ${currentCount + 1} Comments`;
+                        countElement.innerHTML = `
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            ${currentCount + 1} Comments
+                        `;
                     }
                     
                     const titleCount = document.querySelector('.comments-section h2');
@@ -293,7 +372,12 @@ $flash = getFlashMessage();
                     const countElement = document.querySelector('.comment-count');
                     if (countElement) {
                         const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]);
-                        countElement.textContent = `💬 ${currentCount - 1} Comments`;
+                        countElement.innerHTML = `
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            ${currentCount - 1} Comments
+                        `;
                     }
                     
                     const titleCount = document.querySelector('.comments-section h2');
