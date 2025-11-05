@@ -337,6 +337,60 @@ if (!isLoggedIn()) {
             <?php endif; ?>
         </div>
     </div>
+
+ <section class="loved-by-writers">
+  <div class="writers-header">
+    <h2>Loved by Writers</h2>
+    <p>Join thousands of creators who trust <span class="highlight">Momentum</span> to share their stories with the world.</p>
+  </div>
+
+  <div class="testimonial-container">
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">
+        "Momentum has completely changed how I approach my writing. The flow and simplicity make it a joy to create every day."
+      </p>
+      <div class="writer-info">
+        <img src="assets/images/Isiri.jpg" alt="Isiri" class="writer-img">
+        <div>
+          <h4>Isiri</h4>
+          <p>Tech Journalist</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">
+        "Momentum feels like it was built for writers. It’s fast, distraction-free, and helps me stay in the zone while crafting articles."
+      </p>
+      <div class="writer-info">
+        <img src="assets/images/Lakindu.jpg" alt="Lakindu" class="writer-img">
+        <div>
+          <h4>Lakindu</h4>
+          <p>Tech Journalist</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">
+        "I’ve tried so many writing tools, but Momentum stands out. It’s beautiful, intuitive, and helps me focus on storytelling."
+      </p>
+      <div class="writer-info">
+        <img src="assets/images/Ronaka.jpg" alt="Ronaka" class="writer-img">
+        <div>
+          <h4>Ronaka</h4>
+          <p>Tech Journalist</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
     
     <footer class="footer">
         <p>&copy; <?php echo date('Y'); ?> <?php echo APP_NAME; ?>. All rights reserved.</p>
