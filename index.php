@@ -81,9 +81,10 @@ if (!isLoggedIn()) {
     <nav class="navbar">
         <div class="container">
             <div class="brand-section">
-                <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
-                <p class="brand-tagline">Where ideas come to life and stories find their voice</p>
-            </div>
+    <a href="index.php" class="logo">
+        <img src="assets/images/logo.svg" alt="Momentum" style="height: 50px; display: block;">
+    </a>
+</div>
             
             <!-- Search Bar in Navigation -->
             <div class="nav-search">

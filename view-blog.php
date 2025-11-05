@@ -135,12 +135,25 @@ $flash = getFlashMessage();
             stroke: currentColor;
             stroke-width: 2;
         }
+
+        /* Logo styling */
+        .logo img {
+            height: 50px;
+            display: block;
+            transition: opacity 0.2s ease;
+        }
+        
+        .logo:hover img {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="container">
-            <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
+            <a href="index.php" class="logo">
+                <img src="assets/images/logo.svg" alt="Momentum" />
+            </a>
             <div class="nav-links">
                 <?php if (isLoggedIn()): ?>
                     <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
