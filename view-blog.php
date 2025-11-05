@@ -81,7 +81,13 @@ $flash = getFlashMessage();
             cursor: pointer;
             font-size: 14px;
             color: #6b7280;
-            padding: 0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .like-btn:hover {
+            background: #f3f4f6;
         }
         
         .like-btn svg {
@@ -93,13 +99,18 @@ $flash = getFlashMessage();
             transition: all 0.2s ease;
         }
         
+        .like-btn.liked {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        
+        .like-btn.liked:hover {
+            background: #fecaca;
+        }
+        
         .like-btn.liked svg {
             fill: #ef4444;
             stroke: #ef4444;
-        }
-        
-        .like-btn.liked {
-            color: #ef4444;
         }
         
         .like-display svg {
