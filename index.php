@@ -230,6 +230,36 @@ if (!isLoggedIn()) {
         </div>
         <?php endif; ?>
         
+        <!-- How to Use Section - Only show for non-logged-in users -->
+        <?php if (!isLoggedIn()): ?>
+        <div class="how-to-use-section">
+            <div class="how-to-header">
+                <h2 class="how-to-title">Start Publishing in Minutes</h2>
+                <p class="how-to-subtitle">Simple steps to share your voice with the world</p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Create Your Account</h3>
+                    <p class="step-description">Sign up in seconds and customize your writer profile to reflect your unique voice.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Write Your Story</h3>
+                    <p class="step-description">Use our powerful editor to craft compelling content with images, videos, and code.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Reach Your Audience</h3>
+                    <p class="step-description">Publish instantly and watch your story reach readers around the globe.</p>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+        
         <?php if ($flash): ?>
             <div class="alert alert-<?php echo $flash['type']; ?>">
                 <?php echo $flash['message']; ?>
