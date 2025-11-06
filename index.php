@@ -22,10 +22,11 @@ $totalViews = $stmt->fetch()['total'];
 $stmt = $conn->query("SELECT COUNT(*) as total FROM comment");
 $totalComments = $stmt->fetch()['total'];
 
-// Get all blog posts with search
+// Get all blog posts with search - UPDATED TO INCLUDE featured_image
 if ($searchQuery) {
     $stmt = $conn->prepare("
         SELECT bp.*, u.username, u.profile_picture,
+               bp.featured_image,
                COALESCE(bp.views, 0) as views,
                (SELECT COUNT(*) FROM blog_like WHERE blog_id = bp.id) as likes,
                (SELECT COUNT(*) FROM comment WHERE blog_id = bp.id) as comments
@@ -39,6 +40,7 @@ if ($searchQuery) {
 } else {
     $stmt = $conn->prepare("
         SELECT bp.*, u.username, u.profile_picture,
+               bp.featured_image,
                COALESCE(bp.views, 0) as views,
                (SELECT COUNT(*) FROM blog_like WHERE blog_id = bp.id) as likes,
                (SELECT COUNT(*) FROM comment WHERE blog_id = bp.id) as comments
@@ -76,6 +78,34 @@ if (!isLoggedIn()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Blog Card Image Styles */
+        .blog-card-image {
+            width: calc(100% + 40px);
+            height: 200px;
+            overflow: hidden;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 20px -20px;
+            background: #f3f4f6;
+        }
+
+        .blog-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .blog-card-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        .blog-card-image a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -287,6 +317,14 @@ if (!isLoggedIn()) {
             <?php else: ?>
                 <?php foreach ($blogs as $blog): ?>
                     <div class="blog-card">
+                        <?php if (!empty($blog['featured_image']) && file_exists($blog['featured_image'])): ?>
+                            <div class="blog-card-image">
+                                <a href="view-blog.php?id=<?php echo $blog['id']; ?>">
+                                    <img src="<?php echo htmlspecialchars($blog['featured_image']); ?>" alt="<?php echo htmlspecialchars($blog['title']); ?>">
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                        
                         <h2 class="blog-title">
                             <a href="view-blog.php?id=<?php echo $blog['id']; ?>">
                                 <?php echo htmlspecialchars($blog['title']); ?>
@@ -362,7 +400,7 @@ if (!isLoggedIn()) {
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <p class="testimonial-text">
-        "Momentum feels like it was built for writers. It’s fast, distraction-free, and helps me stay in the zone while crafting articles."
+        "Momentum feels like it was built for writers. It's fast, distraction-free, and helps me stay in the zone while crafting articles."
       </p>
       <div class="writer-info">
         <img src="assets/images/Lakindu.jpg" alt="Lakindu" class="writer-img">
@@ -376,7 +414,7 @@ if (!isLoggedIn()) {
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <p class="testimonial-text">
-        "I’ve tried so many writing tools, but Momentum stands out. It’s beautiful, intuitive, and helps me focus on storytelling."
+        "I've tried so many writing tools, but Momentum stands out. It's beautiful, intuitive, and helps me focus on storytelling."
       </p>
       <div class="writer-info">
         <img src="assets/images/Ronaka.jpg" alt="Ronaka" class="writer-img">
