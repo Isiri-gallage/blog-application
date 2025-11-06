@@ -138,7 +138,7 @@ $flash = getFlashMessage();
 
         /* Logo styling */
         .logo img {
-            height: 50px;
+            height: 70px;
             display: block;
             transition: opacity 0.2s ease;
         }
@@ -178,6 +178,12 @@ $flash = getFlashMessage();
         <?php endif; ?>
         
         <article class="blog-single">
+            <?php if ($blog['featured_image']): ?>
+                <div class="blog-featured-image">
+                    <img src="<?php echo htmlspecialchars($blog['featured_image']); ?>" alt="<?php echo htmlspecialchars($blog['title']); ?>">
+                </div>
+            <?php endif; ?>
+            
             <header class="blog-header">
                 <h1 class="blog-title"><?php echo htmlspecialchars($blog['title']); ?></h1>
                 <div class="blog-meta">

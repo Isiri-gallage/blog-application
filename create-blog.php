@@ -125,6 +125,66 @@ $currentUser = getCurrentUser();
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
+        /* Featured Image Upload Styles */
+        .image-upload-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 4px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .image-upload-container:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        .image-upload-container.has-image {
+            border-style: solid;
+            padding: 0;
+        }
+        
+        .upload-placeholder {
+            color: #6c757d;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #adb5bd;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview {
+            position: relative;
+            width: 100%;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+        
+        .remove-image-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+        
+        .remove-image-btn:hover {
+            background: #c82333;
+        }
+        
         .preview-content {
             padding: 20px;
             min-height: 500px;
@@ -229,11 +289,30 @@ $currentUser = getCurrentUser();
         <h1 class="page-title-enhanced">Create New Blog Post</h1>
         <p class="page-subtitle">Share your story with the world using our powerful markdown editor</p>
         
-        <form id="createBlogForm">
+        <form id="createBlogForm" enctype="multipart/form-data">
             <div class="editor-panel" style="margin-bottom: 20px;">
                 <div class="panel-header">Blog Title</div>
                 <div class="form-group-enhanced">
                     <input type="text" id="title" name="title" required placeholder="Enter your blog title...">
+                </div>
+            </div>
+            
+            <!-- Featured Image Upload -->
+            <div class="editor-panel" style="margin-bottom: 20px;">
+                <div class="panel-header">Featured Image (Optional)</div>
+                <div class="form-group-enhanced">
+                    <input type="file" id="featured_image" name="featured_image" accept="image/*" style="display: none;">
+                    <div class="image-upload-container" id="imageUploadContainer" onclick="document.getElementById('featured_image').click()">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <div class="upload-icon">📷</div>
+                            <p><strong>Click to upload</strong> or drag and drop</p>
+                            <p style="font-size: 14px; color: #adb5bd;">PNG, JPG, GIF or WEBP (Max 5MB)</p>
+                        </div>
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImg" src="" alt="Preview">
+                            <button type="button" class="remove-image-btn" onclick="removeImage(event)">Remove</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -268,10 +347,10 @@ $currentUser = getCurrentUser();
                             🔗 Link
                         </button>
                         <button type="button" class="toolbar-btn" onclick="insertMarkdown('code')" title="Code Block">
-                             Code
+                            💻 Code
                         </button>
                         <button type="button" class="toolbar-btn" onclick="insertMarkdown('quote')" title="Quote">
-                             Quote
+                            💬 Quote
                         </button>
                         
                         <div class="toolbar-separator"></div>
@@ -315,6 +394,55 @@ $currentUser = getCurrentUser();
     <script>
         const textarea = document.getElementById('content');
         const preview = document.getElementById('preview');
+        const fileInput = document.getElementById('featured_image');
+        const imageContainer = document.getElementById('imageUploadContainer');
+        const placeholder = document.getElementById('uploadPlaceholder');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        
+        // Store the selected image URL for preview
+        let selectedImageDataUrl = null;
+        
+        // Handle image selection
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file size
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size must be less than 5MB');
+                    fileInput.value = '';
+                    return;
+                }
+                
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedImageDataUrl = e.target.result;
+                    previewImg.src = e.target.result;
+                    placeholder.style.display = 'none';
+                    imagePreview.style.display = 'block';
+                    imageContainer.classList.add('has-image');
+                    
+                    // Update preview
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Remove image
+        function removeImage(e) {
+            e.stopPropagation();
+            fileInput.value = '';
+            previewImg.src = '';
+            selectedImageDataUrl = null;
+            placeholder.style.display = 'block';
+            imagePreview.style.display = 'none';
+            imageContainer.classList.remove('has-image');
+            
+            // Update preview
+            updatePreview();
+        }
         
         // Insert markdown formatting
         function insertMarkdown(type) {
@@ -374,19 +502,39 @@ $currentUser = getCurrentUser();
             textarea.setSelectionRange(cursorPos, cursorPos);
             
             // Trigger preview update
-            textarea.dispatchEvent(new Event('input'));
+            updatePreview();
+        }
+        
+        // Update preview with content and image
+        function updatePreview() {
+            const markdown = textarea.value;
+            
+            if (markdown.trim() === '' && !selectedImageDataUrl) {
+                preview.innerHTML = '<div class="preview-empty">Start writing to see the preview...</div>';
+                return;
+            }
+            
+            let previewHtml = '';
+            
+            // Add featured image to preview if selected
+            if (selectedImageDataUrl) {
+                previewHtml += `
+                    <div style="margin-bottom: 2rem; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <img src="${selectedImageDataUrl}" alt="Featured Image" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: cover;">
+                    </div>
+                `;
+            }
+            
+            // Add markdown content
+            if (markdown.trim()) {
+                previewHtml += markdownToHtml(markdown);
+            }
+            
+            preview.innerHTML = previewHtml || '<div class="preview-empty">Start writing to see the preview...</div>';
         }
         
         // Live preview
-        textarea.addEventListener('input', (e) => {
-            const markdown = e.target.value;
-            if (markdown.trim() === '') {
-                preview.innerHTML = '<div class="preview-empty">Start writing to see the preview...</div>';
-            } else {
-                const html = markdownToHtml(markdown);
-                preview.innerHTML = html;
-            }
-        });
+        textarea.addEventListener('input', updatePreview);
         
         // Form submission
         document.getElementById('createBlogForm').addEventListener('submit', async (e) => {
@@ -408,6 +556,7 @@ $currentUser = getCurrentUser();
                     alert(data.message || 'Failed to create blog');
                 }
             } catch (error) {
+                console.error('Error:', error);
                 alert('An error occurred. Please try again.');
             }
         });

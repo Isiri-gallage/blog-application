@@ -1,4 +1,8 @@
 <?php
+   error_reporting(E_ALL);
+   ini_set('display_errors', 1);
+
+
 require_once 'config/config.php';
 require_once 'config/database.php';
 require_once 'includes/auth.php';
@@ -30,11 +34,208 @@ $currentUser = getCurrentUser();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Blog - <?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Enhanced Editor Styles */
+        .editor-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .editor-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .editor-panel {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 15px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .toolbar-btn {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #495057;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .toolbar-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .toolbar-separator {
+            width: 1px;
+            background: #dee2e6;
+            margin: 0 4px;
+        }
+        
+        .form-group-enhanced {
+            padding: 20px;
+        }
+        
+        .form-group-enhanced label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group-enhanced input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-group-enhanced textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 15px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 500px;
+        }
+        
+        /* Featured Image Upload Styles */
+        .image-upload-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 4px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .image-upload-container:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        .image-upload-container.has-image {
+            border-style: solid;
+            padding: 0;
+        }
+        
+        .upload-placeholder {
+            color: #6c757d;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #adb5bd;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview {
+            position: relative;
+            width: 100%;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+        
+        .remove-image-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .remove-image-btn:hover {
+            background: #c82333;
+        }
+        
+        .preview-content {
+            padding: 20px;
+            min-height: 500px;
+            line-height: 1.8;
+            color: #2c3e50;
+        }
+        
+        .form-actions-enhanced {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .page-title-enhanced {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            height: 70px;
+            display: block;
+            transition: opacity 0.2s ease;
+        }
+        
+        @media (max-width: 1024px) {
+            .editor-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="container">
-            <a href="index.php" class="logo"><?php echo APP_NAME; ?></a>
+            <a href="index.php" class="logo">
+                <img src="assets/images/logo.svg" alt="Momentum" />
+            </a>
             <div class="nav-links">
                 <span class="user-info">Hello, <?php echo $currentUser['username']; ?></span>
                 <a href="profile.php" class="btn btn-secondary">My Profile</a>
@@ -44,32 +245,106 @@ $currentUser = getCurrentUser();
         </div>
     </nav>
     
-    <div class="container main-content">
-        <h1 class="page-title">Edit Blog Post</h1>
+    <div class="container main-content editor-container">
+        <h1 class="page-title-enhanced">Edit Blog Post</h1>
+        <p class="page-subtitle">Update your story</p>
         
-        <form id="editBlogForm" class="blog-form">
+        <form id="editBlogForm" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $blog['id']; ?>">
+            <input type="hidden" id="removeImageFlag" name="remove_image" value="0">
             
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" id="title" name="title" required value="<?php echo htmlspecialchars($blog['title']); ?>">
+            <div class="editor-panel" style="margin-bottom: 20px;">
+                <div class="panel-header">Blog Title</div>
+                <div class="form-group-enhanced">
+                    <input type="text" id="title" name="title" required value="<?php echo htmlspecialchars($blog['title']); ?>">
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="content">Content (Markdown supported)</label>
-                <textarea id="content" name="content" rows="15" required><?php echo htmlspecialchars($blog['content']); ?></textarea>
+            <!-- Featured Image Upload -->
+            <div class="editor-panel" style="margin-bottom: 20px;">
+                <div class="panel-header">Featured Image</div>
+                <div class="form-group-enhanced">
+                    <input type="file" id="featured_image" name="featured_image" accept="image/*" style="display: none;">
+                    <div class="image-upload-container <?php echo $blog['featured_image'] ? 'has-image' : ''; ?>" id="imageUploadContainer" onclick="document.getElementById('featured_image').click()">
+                        <div class="upload-placeholder" id="uploadPlaceholder" style="<?php echo $blog['featured_image'] ? 'display: none;' : ''; ?>">
+                            <div class="upload-icon">📷</div>
+                            <p><strong>Click to upload</strong> or drag and drop</p>
+                            <p style="font-size: 14px; color: #adb5bd;">PNG, JPG, GIF or WEBP (Max 5MB)</p>
+                        </div>
+                        <div class="image-preview" id="imagePreview" style="<?php echo $blog['featured_image'] ? 'display: block;' : 'display: none;'; ?>">
+                            <img id="previewImg" src="<?php echo $blog['featured_image'] ? htmlspecialchars($blog['featured_image']) : ''; ?>" alt="Preview">
+                            <button type="button" class="remove-image-btn" onclick="removeImage(event)">Remove</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Update Blog</button>
-                <a href="view-blog.php?id=<?php echo $blog['id']; ?>" class="btn btn-secondary">Cancel</a>
+            <div class="editor-layout">
+                <!-- Editor Panel -->
+                <div class="editor-panel">
+                    <div class="panel-header">Write</div>
+                    
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('bold')" title="Bold">
+                            <strong>B</strong>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('italic')" title="Italic">
+                            <em>I</em>
+                        </button>
+                        
+                        <div class="toolbar-separator"></div>
+                        
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('h1')" title="Heading 1">
+                            H1
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('h2')" title="Heading 2">
+                            H2
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('h3')" title="Heading 3">
+                            H3
+                        </button>
+                        
+                        <div class="toolbar-separator"></div>
+                        
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('link')" title="Insert Link">
+                            🔗 Link
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('code')" title="Code Block">
+                            💻 Code
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('quote')" title="Quote">
+                            💬 Quote
+                        </button>
+                        
+                        <div class="toolbar-separator"></div>
+                        
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('ul')" title="Bullet List">
+                            • List
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('ol')" title="Numbered List">
+                            1. List
+                        </button>
+                    </div>
+                    
+                    <div class="form-group-enhanced">
+                        <textarea id="content" name="content" required><?php echo htmlspecialchars($blog['content']); ?></textarea>
+                    </div>
+                </div>
+                
+                <!-- Preview Panel -->
+                <div class="editor-panel preview-panel">
+                    <div class="panel-header">Preview</div>
+                    <div id="preview" class="preview-content"></div>
+                </div>
+            </div>
+            
+            <div class="editor-panel" style="margin-top: 20px;">
+                <div class="form-actions-enhanced">
+                    <a href="view-blog.php?id=<?php echo $blog['id']; ?>" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Blog</button>
+                </div>
             </div>
         </form>
-        
-        <div class="markdown-preview">
-            <h3>Preview</h3>
-            <div id="preview" class="preview-content"></div>
-        </div>
     </div>
     
     <footer class="footer">
@@ -78,42 +353,189 @@ $currentUser = getCurrentUser();
     
     <script src="assets/js/main.js"></script>
     <script>
-        // Live preview
-        const contentField = document.getElementById('content');
-        const updatePreview = () => {
-            const markdown = contentField.value;
-            const html = markdownToHtml(markdown);
-            document.getElementById('preview').innerHTML = html;
+// Replace the entire <script> section at the bottom of edit-blog.php with this:
+
+const textarea = document.getElementById('content');
+const preview = document.getElementById('preview');
+const fileInput = document.getElementById('featured_image');
+const imageContainer = document.getElementById('imageUploadContainer');
+const placeholder = document.getElementById('uploadPlaceholder');
+const imagePreview = document.getElementById('imagePreview');
+const previewImg = document.getElementById('previewImg');
+const removeImageFlag = document.getElementById('removeImageFlag');
+
+// Store the selected/existing image URL for preview
+let selectedImageDataUrl = previewImg.src || null;
+
+// Initial preview
+updatePreview();
+
+// Handle image selection
+fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Image size must be less than 5MB');
+            fileInput.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            selectedImageDataUrl = e.target.result;
+            previewImg.src = e.target.result;
+            placeholder.style.display = 'none';
+            imagePreview.style.display = 'block';
+            imageContainer.classList.add('has-image');
+            removeImageFlag.value = '0';
+            
+            // Update preview
+            updatePreview();
         };
-        
-        // Initial preview
-        updatePreview();
-        
-        contentField.addEventListener('input', updatePreview);
-        
-        // Form submission
-        document.getElementById('editBlogForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            
-            try {
-                const response = await fetch('api/update-blog.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.location.href = 'view-blog.php?id=' + formData.get('id');
-                } else {
-                    alert(data.message || 'Failed to update blog');
-                }
-            } catch (error) {
-                alert('An error occurred. Please try again.');
-            }
+        reader.readAsDataURL(file);
+    }
+});
+
+// Remove image
+function removeImage(e) {
+    e.stopPropagation();
+    fileInput.value = '';
+    previewImg.src = '';
+    selectedImageDataUrl = null;
+    placeholder.style.display = 'block';
+    imagePreview.style.display = 'none';
+    imageContainer.classList.remove('has-image');
+    removeImageFlag.value = '1';
+    
+    // Update preview
+    updatePreview();
+}
+
+// Insert markdown formatting
+function insertMarkdown(type) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const beforeText = textarea.value.substring(0, start);
+    const afterText = textarea.value.substring(end);
+    let newText = '';
+    let cursorPos = start;
+    
+    switch(type) {
+        case 'bold':
+            newText = `**${selectedText || 'bold text'}**`;
+            cursorPos = start + (selectedText ? newText.length : 2);
+            break;
+        case 'italic':
+            newText = `*${selectedText || 'italic text'}*`;
+            cursorPos = start + (selectedText ? newText.length : 1);
+            break;
+        case 'h1':
+            newText = `# ${selectedText || 'Heading 1'}`;
+            cursorPos = start + newText.length;
+            break;
+        case 'h2':
+            newText = `## ${selectedText || 'Heading 2'}`;
+            cursorPos = start + newText.length;
+            break;
+        case 'h3':
+            newText = `### ${selectedText || 'Heading 3'}`;
+            cursorPos = start + newText.length;
+            break;
+        case 'link':
+            newText = `[${selectedText || 'link text'}](url)`;
+            cursorPos = start + newText.length - 1;
+            break;
+        case 'code':
+            newText = '```\n' + (selectedText || 'code here') + '\n```';
+            cursorPos = start + (selectedText ? newText.length : 4);
+            break;
+        case 'quote':
+            newText = `> ${selectedText || 'quote text'}`;
+            cursorPos = start + newText.length;
+            break;
+        case 'ul':
+            newText = `- ${selectedText || 'list item'}`;
+            cursorPos = start + newText.length;
+            break;
+        case 'ol':
+            newText = `1. ${selectedText || 'list item'}`;
+            cursorPos = start + newText.length;
+            break;
+    }
+    
+    textarea.value = beforeText + newText + afterText;
+    textarea.focus();
+    textarea.setSelectionRange(cursorPos, cursorPos);
+    updatePreview();
+}
+
+// Update preview with content and image
+function updatePreview() {
+    const markdown = textarea.value;
+    
+    let previewHtml = '';
+    
+    // Add featured image to preview if exists
+    if (selectedImageDataUrl) {
+        previewHtml += `
+            <div style="margin-bottom: 2rem; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <img src="${selectedImageDataUrl}" alt="Featured Image" style="width: 100%; height: auto; display: block; max-height: 400px; object-fit: cover;">
+            </div>
+        `;
+    }
+    
+    // Add markdown content
+    if (markdown.trim()) {
+        previewHtml += markdownToHtml(markdown);
+    }
+    
+    preview.innerHTML = previewHtml || '<div class="preview-empty">Start writing to see the preview...</div>';
+}
+
+// Live preview
+textarea.addEventListener('input', updatePreview);
+
+// Form submission
+document.getElementById('editBlogForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    
+    try {
+        const response = await fetch('api/update-blog.php', {
+            method: 'POST',
+            body: formData
         });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.href = 'view-blog.php?id=' + formData.get('id');
+        } else {
+            alert(data.message || 'Failed to update blog');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    }
+});
+
+// Keyboard shortcuts
+textarea.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        insertMarkdown('bold');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        e.preventDefault();
+        insertMarkdown('italic');
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        insertMarkdown('link');
+    }
+});
     </script>
 </body>
 </html>
