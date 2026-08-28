@@ -2,7 +2,7 @@
 
 A full-featured blog application built with PHP, MySQL, HTML, CSS, and JavaScript.
 
-## 📋 Features
+##  Features
 
 ### User Authentication & Authorization
 - User registration with validation
@@ -17,7 +17,7 @@ A full-featured blog application built with PHP, MySQL, HTML, CSS, and JavaScrip
 - Delete your own blog posts
 - View individual blog posts with full content
   
-### User Profiles ✨ NEW
+### User Profiles 
 - Each user has their own profile page
 - Display user statistics (total blogs, total likes received)
 - Editable bio section
@@ -25,7 +25,7 @@ A full-featured blog application built with PHP, MySQL, HTML, CSS, and JavaScrip
 - Profile avatar with user initial
 - Click on any author name to view their profile
 
-### Comments System ✨ NEW
+### Comments System 
 - Users can comment on any blog post
 - Real-time comment posting without page reload
 - Delete your own comments
@@ -33,7 +33,7 @@ A full-featured blog application built with PHP, MySQL, HTML, CSS, and JavaScrip
 - View all comments with author and timestamp
 - Login required to post comments
 
-### Likes System ✨ NEW
+### Likes System 
 - Like/unlike blog posts with a single click
 - Visual feedback (heart button turns red when liked)
 - Like count displayed on blogs
@@ -53,14 +53,14 @@ A full-featured blog application built with PHP, MySQL, HTML, CSS, and JavaScrip
 - Easy navigation
 - Smooth animations and transitions
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6)
 - **Backend**: PHP 7.4+
 - **Database**: MySQL
 - **Server**: Apache (XAMPP)
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
@@ -178,7 +178,7 @@ Open your browser and navigate to:
 http://localhost/blog-app
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 blog-app/
@@ -198,9 +198,9 @@ blog-app/
 │   ├── create-blog.php     # Create blog endpoint
 │   ├── update-blog.php     # Update blog endpoint
 │   ├── delete-blog.php     # Delete blog endpoint
-│   ├── add-comment.php     # Add comment endpoint ✨
-│   ├── delete-comment.php  # Delete comment endpoint ✨
-│   └── toggle-like.php     # Toggle like endpoint ✨
+│   ├── add-comment.php     # Add comment endpoint 
+│   ├── delete-comment.php  # Delete comment endpoint 
+│   └── toggle-like.php     # Toggle like endpoint 
 │
 ├── assets/
 │   ├── css/
@@ -214,10 +214,10 @@ blog-app/
 ├── create-blog.php         # Create blog page
 ├── edit-blog.php           # Edit blog page
 ├── view-blog.php           # Single blog view page
-├── profile.php             # User profile page ✨
-├── edit-profile.php        # Edit profile page ✨
+├── profile.php             # User profile page 
+├── edit-profile.php        # Edit profile page 
 ├── install.php             # Initial database installation
-├── update-database.php     # Database update script ✨
+├── update-database.php     # Database update script 
 │
 ├── .env                    # Environment variables (not in Git)
 ├── .env.example            # Environment template
@@ -225,7 +225,7 @@ blog-app/
 └── README.md              # This file
 ```
 
-## 🚀 Usage
+## Usage
 
 ### Register a New Account
 1. Click "Register" button
@@ -256,7 +256,7 @@ blog-app/
 
 ### Like a Blog Post
 1. Go to any blog post
-2. Click the heart (❤️) button
+2. Click the heart button
 3. Click again to unlike
 
 ### Comment on a Blog
@@ -297,7 +297,7 @@ The blog editor supports basic Markdown:
 2. Click "Delete Blog" button
 3. Confirm deletion
 
-## 🔒 Security Features
+## Security Features
 
 - Password hashing using PHP's `password_hash()`
 - SQL injection prevention using PDO prepared statements
@@ -307,7 +307,7 @@ The blog editor supports basic Markdown:
 - Input validation and sanitization
 - CSRF protection through session validation
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### user Table
 - `id` (INT, Primary Key, Auto Increment)
@@ -315,7 +315,7 @@ The blog editor supports basic Markdown:
 - `email` (VARCHAR 100, Unique)
 - `password` (VARCHAR 255, Hashed)
 - `role` (VARCHAR 20, Default: 'user')
-- `bio` (TEXT, Nullable) ✨
+- `bio` (TEXT, Nullable) 
 - `created_at` (TIMESTAMP)
 
 ### blog_post Table
@@ -326,21 +326,21 @@ The blog editor supports basic Markdown:
 - `created_at` (TIMESTAMP)
 - `updated_at` (TIMESTAMP)
 
-### comment Table ✨
+### comment Table 
 - `id` (INT, Primary Key, Auto Increment)
 - `blog_id` (INT, Foreign Key → blog_post.id)
 - `user_id` (INT, Foreign Key → user.id)
 - `content` (TEXT)
 - `created_at` (TIMESTAMP)
 
-### blog_like Table ✨
+### blog_like Table 
 - `id` (INT, Primary Key, Auto Increment)
 - `blog_id` (INT, Foreign Key → blog_post.id)
 - `user_id` (INT, Foreign Key → user.id)
 - `created_at` (TIMESTAMP)
 - Unique constraint on (blog_id, user_id)
 
-## 🌐 Hosting on Free Platforms
+## Hosting on Free Platforms
 
 ### InfinityFree
 
@@ -369,7 +369,7 @@ The blog editor supports basic Markdown:
 6. Run installation scripts
 7. Access your site
 
-## 📝 Environment Variables
+## Environment Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -382,7 +382,7 @@ The blog editor supports basic Markdown:
 | `SESSION_NAME` | Session cookie name | `blog_session` |
 | `SESSION_LIFETIME` | Session duration (seconds) | `3600` |
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Connection Error
 - Check if MySQL is running in XAMPP
@@ -414,7 +414,7 @@ The blog editor supports basic Markdown:
 - Delete orphaned `.ibd` files from `mysql/data/blog_db/`
 - Start MySQL and recreate tables
 
-## 🎨 Customization
+## Customization
 
 ### Change Color Scheme
 Edit `assets/css/style.css`:
@@ -431,7 +431,7 @@ APP_NAME=Your Blog Name
 ### Modify Markdown Parser
 Edit `includes/functions.php` → `markdownToHtml()` function
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 Potential features to add:
 - Search functionality
@@ -446,24 +446,24 @@ Potential features to add:
 - Blog drafts
 - Featured posts
 
-## 📧 Contact
+## Contact
 
 For any questions or issues, please contact:
 - Email: your-isirigallage2002@gmail.com
 - GitHub: Isiri-gallage
 
-## 📄 License
+## License
 
 This project is open source and available for educational purposes.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - University of Moratuwa - Faculty of Information Technology
 - IN2120 - Web Programming Course
 
-## 📊 Version History
+## Version History
 
-### Version 2.0 (Latest) ✨
+### Version 2.0 (Latest) 
 - Added user profile pages
 - Implemented comments system
 - Implemented likes functionality
